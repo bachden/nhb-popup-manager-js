@@ -52,7 +52,7 @@ if (mode == "production") {
 const conf = {
     output: {
         path: Path.resolve("./build/dist"),
-        filename: "bundle.js"
+        filename: "index.js"
     },
     entry: [appEntry],
     stats: "minimal",
