@@ -63,7 +63,7 @@ PopupManager.close(popupId, callback)
 callback method will be called right after PopupManager instance update its state, argument passed is popupId
 
 5. closing behaviours <br/>
-there are 2 method supported:
+there are 2 methods:
 ``` javascript
 onPopupWillClose(popupId, type)
 ```
