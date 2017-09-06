@@ -60,15 +60,28 @@ PopupManager.close(popupId, callback)
 
 callback method will be called right after PopupManager instance update its state, argument passed is popupId
 
+5. closing behaviours
+there are 2 method supported:
+``` javascript
+onPopupWillClose(popupId, type)
+```
+called before popup close. If this method return false, closing propagation will be stopped
+if popup close by use click on modal (autoClose == true), type == 'modal', otherwise, type == 'normal'
+
+``` javascript
+onPopupDidClose(popupId)
+```
+called after popup closed
+
 # Popup config
 below is simple popup config:
 ``` javascript
 {
     title: "Popup title",
     className: ["test-popup"],
-    autoClose: true, // if auto close on modal or close button clicked
+    autoClose: true, // auto close on modal or close button clicked
     closeBtn: {
-        // all properties here will be forwarded to close button
+        // all properties here will be forwarded to close button, except onClick
         className: ["test-close-btn"],
         style: {
             color: "red"
@@ -97,7 +110,6 @@ below is simple popup config:
     content: (
         <div className="test-content">
             <p>This is popup content</p>
-            <button onClick={openPopup}>Force close and open another</button>
         </div>
     )
 }
