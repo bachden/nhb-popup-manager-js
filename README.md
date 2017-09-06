@@ -58,4 +58,45 @@ or
 PopupManager.close(popupId, callback)
 ```
 
-callback method will be called right after PopupManager instance update its state with ```popupId````
+callback method will be called right after PopupManager instance update its state, argument passed is popupId
+
+# Popup config
+below is simple popup config:
+``` javascript
+{
+    title: "Test popup",
+    autoClose: true, // if modalEnabled == true, auto close on modal or close btn clicked
+    closeBtn: {
+        className: ["test-close-btn"],
+        onClick: () => {
+            // return true; // true to prevent auto close (if it == true), otherwise, if autoClose == true, popup will be closed
+        }
+    },
+    // styling for popup wrapper tag
+    style: {
+        marginTop: "10px"
+    },
+    modalEnabled: true, // enable modal, but may not effect if modal not specified
+    modal: {
+        style: {
+            position: "fixed",
+            left: "0px",
+            right: "0px",
+            top: "0px",
+            bottom: "0px",
+            backgroundColor: "rgba(0,0,0,0.5)"
+        }
+    },
+    onClosed: (popupId) => {
+        // method called everytime popup closed
+        console.log("popup closed: id=" + popupId)
+        prevPopupId = undefined
+    },
+    content: (
+        <div>
+            <div>This is popup content</div>
+            <button onClick={openPopup}>Add more</button>
+        </div>
+    )
+}
+```
