@@ -34,7 +34,7 @@ var popupId = PopupManager.open({
     })
 ```
 above method will render popup on default instance (with no name attr) <br/>
-to render popup to specific popup manager:
+to render popup to specific popup manager: <br/>
 ``` javascript
 import PopupManager from "nhb-popup-manager"
 var popupId = PopupManager.open({
@@ -48,8 +48,10 @@ var popupId = PopupManager.open({
 PopupManager.close(popupId)
 ```
 
-4. callback
-PopupManager provide 2 common methods: open and close. In deep, both method modify internal state of a PopupManager instance, so, to do many action like: close a popup then open new one, you may want to add callback:
+4. callback <br/>
+PopupManager provide 2 common methods: open and close.  <br/>
+In deep, both method modify internal state of a PopupManager instance,  <br/>
+so, to do many action like: close a popup then open new one, you may want to add callback: <br/>
 ``` javascript
 PopupManager.open({...popupConfig}, callback)
 ```
@@ -60,7 +62,7 @@ PopupManager.close(popupId, callback)
 
 callback method will be called right after PopupManager instance update its state, argument passed is popupId
 
-5. closing behaviours
+5. closing behaviours <br/>
 there are 2 method supported:
 ``` javascript
 onPopupWillClose(popupId, type)
