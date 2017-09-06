@@ -31,8 +31,11 @@ function openPopup() {
                     backgroundColor: "rgba(0,0,0,0.5)"
                 }
             },
-            onPopupWillClose: () => {
-                return confirm("Are you sure?"); // true to continue close propagation, false to prevent popup closing
+            onPopupWillClose: (popupId, type) => {
+                console.log("Popup " + popupId + " by type: " + type)
+                return confirm("You're attempting to close popup " + (type == "normal"
+                    ? "by normal way"
+                    : "by click on outside") + ".\nAre you sure you want to close popup id " + popupId + "?"); // true to continue close propagation, false to prevent popup closing
             },
             onPopupDidClose: (popupId) => {
                 // method called everytime popup closed
@@ -42,7 +45,7 @@ function openPopup() {
             content: (
                 <div className="test-content">
                     <p>This is popup content</p>
-                    <button onClick={openPopup}>Close and open another</button>
+                    <button onClick={openPopup}>Force close and open another</button>
                 </div>
             )
         }, (popupId) => {
@@ -51,7 +54,7 @@ function openPopup() {
         })
     }
     if (prevPopupId != undefined) {
-        PopupManager.close(prevPopupId, openNewPopup)
+        PopupManager.close(prevPopupId, openNewPopup, true)
     } else {
         openNewPopup()
     }

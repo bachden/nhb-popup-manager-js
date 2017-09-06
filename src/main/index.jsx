@@ -95,7 +95,7 @@ export default class PopupManager extends React.Component {
         return popup.id
     }
 
-    static close(popupId, callback, force = false) {
+    static close(popupId, callback, force = false, type = "normal") {
         if (callback && typeof callback != "function") {
             throw "Callback must be function"
         }
@@ -108,7 +108,7 @@ export default class PopupManager extends React.Component {
                 var continueClosing = true;
                 if (force === false) {
                     if (typeof popup.onPopupWillClose == "function") {
-                        continueClosing = popup.onPopupWillClose(popupId)
+                        continueClosing = popup.onPopupWillClose(popupId, type)
                     }
                 }
                 if (continueClosing) {
@@ -161,9 +161,9 @@ export default class PopupManager extends React.Component {
                                 }
                             }
 
-                            var onClose = (e) => {
+                            var onClose = (e, type = "normal") => {
                                 if (popup.autoClose) {
-                                    PopupManager.close(popup.id, undefined)
+                                    PopupManager.close(popup.id, undefined, false, type)
                                 }
                             }
 
@@ -171,17 +171,22 @@ export default class PopupManager extends React.Component {
                                 <div className={classes.join(" ")} style={popup.style}>
                                     <div className="popup-header">
                                         <div className="popup-title">{popup.title}</div>
-                                        <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={onClose}/>
+                                        <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={(e) => {
+                                            onClose(e)
+                                        }}/>
                                     </div>
                                     <div className="popup-content">
                                         {popup.content}
                                     </div>
                                 </div>
                             )
+
                             list.push(popup.modal
                                 ? (
                                     <div key={popup.key} className="popup-holder">
-                                        <div className="popup-modal" {...popup.modal} onClick={onClose}></div>
+                                        <div className="popup-modal" {...popup.modal} onClick={(e) => {
+                                            onClose(e, "modal")
+                                        }}></div>
                                         {popupDisplayer}
                                     </div>
                                 )
