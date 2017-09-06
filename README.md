@@ -68,7 +68,7 @@ there are 2 methods:
 onPopupWillClose(popupId, type)
 ```
 called before popup close. If this method return false, closing propagation will be stopped  <br/>
-if popup close by use click on modal (autoClose == true), type == 'modal', otherwise, type == 'normal'
+if popup closed by user click on modal (autoClose == true), type == 'modal', otherwise, type == 'normal'
 
 ``` javascript
 onPopupDidClose(popupId)
