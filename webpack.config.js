@@ -52,7 +52,9 @@ if (mode == "production") {
 const conf = {
     output: {
         path: Path.resolve("./build/dist"),
-        filename: "index.js"
+        filename: "index.js",
+        library: 'shared-components',
+        libraryTarget: 'umd'
     },
     entry: [appEntry],
     stats: "minimal",
@@ -117,5 +119,7 @@ if (mode == "development") {
 } else {
     conf.entry = [appEntry];
 }
+
+console.log("appEntry: " + appEntry)
 
 module.exports = conf
