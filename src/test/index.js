@@ -13,14 +13,14 @@ function openPopup() {
             className: ["test-popup"],
             autoClose: true, // if modalEnabled == true, auto close on modal clicked
             closeBtn: {
+                // all properties here will be forwarded to close button
                 className: ["test-close-btn"],
-                onClick: () => {
-                    // return true; // true to prevent auto close, otherwise, if autoClose == true, popup will be closed
+                style: {
+                    color: "red"
                 }
             },
             // styling for popup wrapper tag
             style: {},
-            modalEnabled: true,
             modal: {
                 style: {
                     position: "fixed",
@@ -31,7 +31,10 @@ function openPopup() {
                     backgroundColor: "rgba(0,0,0,0.5)"
                 }
             },
-            onClosed: (popupId) => {
+            onPopupWillClose: () => {
+                return confirm("Are you sure?"); // true to continue close propagation, false to prevent popup closing
+            },
+            onPopupDidClose: (popupId) => {
                 // method called everytime popup closed
                 console.log("popup closed: id=" + popupId)
                 prevPopupId = undefined

@@ -95,22 +95,36 @@ export default class PopupManager extends React.Component {
         return popup.id
     }
 
-    static close(popupId, callback) {
-        var manager = popupIdToManagerInstance[popupId + ""]
+    static close(popupId, callback, force = false) {
+        if (callback && typeof callback != "function") {
+            throw "Callback must be function"
+        }
+        popupId = popupId + ""
+        var manager = popupIdToManagerInstance[popupId]
         if (manager) {
             var popups = Object.assign({}, manager.state.popups);
-            var popup = popups[popupId + ""];
-            delete popups[popupId + ""];
-            manager.setState({
-                popups: popups
-            }, () => {
-                if (callback) {
-                    callback()
+            var popup = popups[popupId];
+            if (popup) {
+                var continueClosing = true;
+                if (force === false) {
+                    if (typeof popup.onPopupWillClose == "function") {
+                        continueClosing = popup.onPopupWillClose(popupId)
+                    }
                 }
-                if (typeof popup.onClosed == "function") {
-                    popup.onClosed(popup.id)
+                if (continueClosing) {
+                    delete popups[popupId];
+                    manager.setState({
+                        popups: popups
+                    }, () => {
+                        if (typeof popup.onPopupDidClose == "function") {
+                            popup.onPopupDidClose(popup.id)
+                        }
+                        if (typeof callback == "function") {
+                            callback()
+                        }
+                    })
                 }
-            })
+            }
         }
     }
 
@@ -118,65 +132,63 @@ export default class PopupManager extends React.Component {
         return (
             <div className="popup-manager">
                 {(() => {
-                    var list = []
+                    var list = [];
                     for (var id in this.state.popups) {
-                        var popup = this.state.popups[id]
-                        var classes = ["popup"]
-                        if (popup.className) {
-                            if (typeof popup.className == "string") {
-                                classes.push(popup.className)
-                            } else if (typeof popup.className == "object" && popup.className instanceof Array) {
-                                classes = classes.concat(popup.className)
+                        ((popup) => {
+                            var classes = ["popup"]
+                            if (popup.className) {
+                                if (typeof popup.className == "string") {
+                                    classes.push(popup.className)
+                                } else if (typeof popup.className == "object" && popup.className instanceof Array) {
+                                    classes = classes.concat(popup.className)
+                                }
                             }
-                        }
+                            var closeBtn = popup.closeBtn
+                                ? {
+                                    ...popup.closeBtn
+                                }
+                                : undefined
+                            var closeBtnClasses = ["popup-close-button"]
+                            if (closeBtn) {
+                                var className = closeBtn.className;
+                                if (className) {
+                                    if (typeof popup.closeBtn.className == "string") {
+                                        closeBtnClasses.push(popup.closeBtn.className)
+                                    } else if (popup.closeBtn.className instanceof Array) {
+                                        closeBtnClasses = closeBtnClasses.concat(popup.closeBtn.className)
+                                    }
+                                    delete closeBtn.className
+                                }
+                            }
 
-                        var closeBtnClasses = ["popup-close-button"]
-                        if (popup.closeBtn && popup.closeBtn.className) {
-                            if (typeof popup.closeBtn.className == "string") {
-                                closeBtnClasses.push(popup.closeBtn.className)
-                            } else if (popup.closeBtn.className instanceof Array) {
-                                closeBtnClasses = closeBtnClasses.concat(popup.closeBtn.className)
+                            var onClose = (e) => {
+                                if (popup.autoClose) {
+                                    PopupManager.close(popup.id, undefined)
+                                }
                             }
-                        }
 
-                        var onClose = (e) => {
-                            var callback = popup.closeBtn && popup.closeBtn.onClick
-                            callback = callback
-                                ? popup.closeBtn.onClick
-                                : undefined;
-                            var preventClose = false;
-                            if (callback) {
-                                preventClose = callback(e, popup.id)
-                            }
-                            if (!preventClose && popup.autoClose) {
-                                PopupManager.close(popup.id)
-                            }
-                        }
-
-                        var popupDisplayer = (
-                            <div className={classes.join(" ")} style={popup.style}>
-                                <div className="popup-header">
-                                    <div className="popup-title">{popup.title}</div>
-                                    <div className={closeBtnClasses.join(" ")} onClick={onClose}/>
-                                </div>
-                                <div className="popup-content">
-                                    {popup.content}
-                                </div>
-                            </div>
-                        )
-                        list.push((popup.modalEnabled && popup.modal)
-                            ? (
-                                <div key={popup.key} className="popup-holder">
-                                    <div className="popup-modal" {...popup.modal} onClick={(e) => {
-                                        if (popup.autoClose) {
-                                            PopupManager.close(popup.id)
-                                        }
-                                    }}/> {popupDisplayer}
+                            var popupDisplayer = (
+                                <div className={classes.join(" ")} style={popup.style}>
+                                    <div className="popup-header">
+                                        <div className="popup-title">{popup.title}</div>
+                                        <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={onClose}/>
+                                    </div>
+                                    <div className="popup-content">
+                                        {popup.content}
+                                    </div>
                                 </div>
                             )
-                            : (
-                                <div key={popup.key} className="popup-holder">{popupDisplayer}</div>
-                            ))
+                            list.push(popup.modal
+                                ? (
+                                    <div key={popup.key} className="popup-holder">
+                                        <div className="popup-modal" {...popup.modal} onClick={onClose}></div>
+                                        {popupDisplayer}
+                                    </div>
+                                )
+                                : (
+                                    <div key={popup.key} className="popup-holder">{popupDisplayer}</div>
+                                ))
+                        })(this.state.popups[id])
                     }
                     return list
                 })()}
