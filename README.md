@@ -64,19 +64,18 @@ callback method will be called right after PopupManager instance update its stat
 below is simple popup config:
 ``` javascript
 {
-    title: "Test popup",
-    autoClose: true, // if modalEnabled == true, auto close on modal or close btn clicked
+    title: "Popup title",
+    className: ["test-popup"],
+    autoClose: true, // if auto close on modal or close button clicked
     closeBtn: {
+        // all properties here will be forwarded to close button
         className: ["test-close-btn"],
-        onClick: () => {
-            // return true; // true to prevent auto close (if it == true), otherwise, if autoClose == true, popup will be closed
+        style: {
+            color: "red"
         }
     },
     // styling for popup wrapper tag
-    style: {
-        marginTop: "10px"
-    },
-    modalEnabled: true, // enable modal, but may not effect if modal not specified
+    style: {},
     modal: {
         style: {
             position: "fixed",
@@ -87,14 +86,18 @@ below is simple popup config:
             backgroundColor: "rgba(0,0,0,0.5)"
         }
     },
-    onClosed: (popupId) => {
+    onPopupWillClose: (popupId, type) => {
+        console.log("Popup " + popupId + " by type: " + type)
+        return confirm("Are you sure you want to close popup id " + popupId + "?"); // true to continue close propagation, false to prevent popup closing
+    },
+    onPopupDidClose: (popupId) => {
         // method called everytime popup closed
         console.log("popup closed: id=" + popupId)
     },
     content: (
-        <div>
-            <div>This is popup content</div>
-            <button onClick={openPopup}>Add more</button>
+        <div className="test-content">
+            <p>This is popup content</p>
+            <button onClick={openPopup}>Force close and open another</button>
         </div>
     )
 }
