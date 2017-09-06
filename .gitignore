@@ -4,3 +4,4 @@ node_modules
 .classpath
 build/dist
 *.DS_Store
+/build/
