@@ -90,7 +90,6 @@ below is simple popup config:
     onClosed: (popupId) => {
         // method called everytime popup closed
         console.log("popup closed: id=" + popupId)
-        prevPopupId = undefined
     },
     content: (
         <div>
