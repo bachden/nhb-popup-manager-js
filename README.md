@@ -33,7 +33,7 @@ var popupId = PopupManager.open({
     content: <div>JSX tag for content displayer</div>
     })
 ```
-above method will render popup on default instance (with no name attr)
+above method will render popup on default instance (with no name attr) <br/>
 to render popup to specific popup manager:
 ``` javascript
 import PopupManager from "nhb-popup-manager"
