@@ -9,12 +9,16 @@ function openPopup() {
     var openNewPopup = () => {
         prevPopupId = PopupManager.open({
             title: "Test popup " + (popupIndex++),
-            autoClose: true,
+            autoClose: true, // if modalEnabled == true, auto close on modal clicked
             closeBtn: {
                 className: ["test-close-btn"],
                 onClick: () => {
                     // return true; // true to prevent auto close, otherwise, if autoClose == true, popup will be closed
                 }
+            },
+            // styling for popup wrapper tag
+            style: {
+                marginTop: "10px"
             },
             modalEnabled: true,
             modal: {
