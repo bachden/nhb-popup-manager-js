@@ -1,3 +1,31 @@
 .popup {
     position: relative;
+    margin: 20px;
+}
+
+.popup-header {
+    position: relative;
+}
+
+.popup-content {
+    position: relative;
+}
+
+.popup-close-button {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+}
+
+.popup-close-button:hover {
+    outline: 1px solid red;
+}
+
+.popup-header {
+    padding: 5px;
+    user-select: none;
+}
+
+.popup-title {
+    text-align: center;
 }

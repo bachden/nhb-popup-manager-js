@@ -1,0 +1,32 @@
+.test-popup {
+    border: 1px solid white;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.test-popup .popup-header {
+    background: #ccc;
+}
+
+.popup-close-button.test-close-btn {
+    padding: 0 6px 2px 7px;
+}
+
+.popup-close-button.test-close-btn:hover {
+    margin-top: -1px;
+    margin-right: -1px;
+    border: 1px solid white;
+    background-color: #c00;
+    border-radius: 10px;
+    outline: none;
+    padding: 0 6px 2px 7px;
+}
+
+.test-popup .popup-content {
+    padding: 10px;
+    background: white;
+}
+
+.test-content {
+    text-align: center;
+}

@@ -1,6 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import PopupManager from "../main"
+import css from "./test.css"
 
 var popupIndex = 0;
 var prevPopupId = undefined;
@@ -8,7 +9,8 @@ var prevPopupId = undefined;
 function openPopup() {
     var openNewPopup = () => {
         prevPopupId = PopupManager.open({
-            title: "Test popup " + (popupIndex++),
+            title: "Popup " + (popupIndex++),
+            className: ["test-popup"],
             autoClose: true, // if modalEnabled == true, auto close on modal clicked
             closeBtn: {
                 className: ["test-close-btn"],
@@ -17,9 +19,7 @@ function openPopup() {
                 }
             },
             // styling for popup wrapper tag
-            style: {
-                marginTop: "10px"
-            },
+            style: {},
             modalEnabled: true,
             modal: {
                 style: {
@@ -37,9 +37,9 @@ function openPopup() {
                 prevPopupId = undefined
             },
             content: (
-                <div>
-                    <div>This is popup content</div>
-                    <button onClick={openPopup}>Add more</button>
+                <div className="test-content">
+                    <p>This is popup content</p>
+                    <button onClick={openPopup}>Close and open another</button>
                 </div>
             )
         }, (popupId) => {

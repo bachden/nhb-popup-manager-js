@@ -134,8 +134,8 @@ export default class PopupManager extends React.Component {
                         if (popup.closeBtn && popup.closeBtn.className) {
                             if (typeof popup.closeBtn.className == "string") {
                                 closeBtnClasses.push(popup.closeBtn.className)
-                            } else if (typeof popup.closeBtn.className == "object" && popup.closeBtn.className instanceof Array) {
-                                closeBtnClasses = classes.concat(popup.closeBtn.className)
+                            } else if (popup.closeBtn.className instanceof Array) {
+                                closeBtnClasses = closeBtnClasses.concat(popup.closeBtn.className)
                             }
                         }
 
