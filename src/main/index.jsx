@@ -129,6 +129,7 @@ export default class PopupManager extends React.Component {
                                 classes = classes.concat(popup.className)
                             }
                         }
+
                         var closeBtnClasses = ["popup-close-button"]
                         if (popup.closeBtn && popup.closeBtn.className) {
                             if (typeof popup.closeBtn.className == "string") {
@@ -153,7 +154,7 @@ export default class PopupManager extends React.Component {
                         }
 
                         var popupDisplayer = (
-                            <div className={classes.join(" ")}>
+                            <div className={classes.join(" ")} style={popup.style}>
                                 <div className="popup-header">
                                     <div className="popup-title">{popup.title}</div>
                                     <div className={closeBtnClasses.join(" ")} onClick={onClose}/>
