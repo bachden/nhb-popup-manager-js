@@ -6,10 +6,23 @@ import css from "./test.css"
 var popupIndex = 0;
 var prevPopupId = undefined;
 
+class MyPopup extends React.Component {
+    render() {
+        return (<div className="test-content" onMouseDown={(event) => {
+                console.log("start dragging")
+                this.props.startDragging(event)
+            }}>
+            <p>This is popup: {this.props.getId()}</p>
+            <button onClick={openPopup}>Force close and open another</button>
+        </div>)
+    }
+}
+
 function openPopup() {
     var openNewPopup = () => {
         prevPopupId = PopupManager.open({
-            title: "Popup " + (popupIndex++),
+            title: "Popup " + (
+            popupIndex++),
             className: ["test-popup"],
             autoClose: true, // if modalEnabled == true, auto close on modal clicked
             closeBtn: {
@@ -19,8 +32,13 @@ function openPopup() {
                     color: "red"
                 }
             },
+            draggable: true,
+            customDraggingHandler: true,
+            keepDraggingByHeader: false,
             // styling for popup wrapper tag
-            style: {},
+            style: {
+                position: "absolute"
+            },
             modal: {
                 style: {
                     position: "fixed",
@@ -33,7 +51,8 @@ function openPopup() {
             },
             onPopupWillClose: (popupId, type) => {
                 console.log("Popup " + popupId + " by type: " + type)
-                return confirm("You're attempting to close popup " + (type == "normal"
+                return confirm("You're attempting to close popup " + (
+                    type == "normal"
                     ? "by normal way"
                     : "by click on outside") + ".\nAre you sure you want to close popup id " + popupId + "?"); // true to continue close propagation, false to prevent popup closing
             },
@@ -42,12 +61,11 @@ function openPopup() {
                 console.log("popup closed: id=" + popupId)
                 prevPopupId = undefined
             },
-            content: (
-                <div className="test-content">
-                    <p>This is popup content</p>
-                    <button onClick={openPopup}>Force close and open another</button>
-                </div>
-            )
+            content: [
+                MyPopup, {
+                    getId: () => prevPopupId
+                }
+            ]
         }, (popupId) => {
             prevPopupId = popupId
             console.log("new popup opened: id=" + popupId)
@@ -60,9 +78,7 @@ function openPopup() {
     }
 }
 
-ReactDOM.render((
-    <div>
-        <button onClick={openPopup}>Open popup</button>
-        <PopupManager/>
-    </div>
-), document.getElementById("application-root"))
+ReactDOM.render((<div>
+    <button onClick={openPopup}>Open popup</button>
+    <PopupManager/>
+</div>), document.getElementById("application-root"))

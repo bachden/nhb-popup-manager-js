@@ -40,7 +40,8 @@ export default class PopupManager extends React.Component {
             throw "Invalid popup info"
         } else if (arguments.length == 1) {
             if (!(typeof arguments[0] === "object")) {
-                throw "Invalid popup info, expected for object, got " + (typeof arguments[0])
+                throw "Invalid popup info, expected for object, got " + (
+                typeof arguments[0])
             } else {
                 popup = arguments[0]
             }
@@ -129,9 +130,9 @@ export default class PopupManager extends React.Component {
     }
 
     render() {
-        return (
-            <div className="popup-manager">
-                {(() => {
+        return (<div className="popup-manager">
+            {
+                (() => {
                     var list = [];
                     for (var id in this.state.popups) {
                         ((popup) => {
@@ -167,38 +168,128 @@ export default class PopupManager extends React.Component {
                                 }
                             }
 
-                            var popupDisplayer = (
-                                <div className={classes.join(" ")} style={popup.style}>
-                                    <div className="popup-header">
-                                        <div className="popup-title">{popup.title}</div>
-                                        <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={(e) => {
+                            var draggable = popup.draggable;
+                            var popupContent = popup.content;
+                            var additionalProps = {};
+
+                            var popupElement;
+                            var headerDragConfig = {};
+                            var onRef = (target) => {
+                                popupElement = target;
+                            }
+                            if (draggable) {
+                                var startX = 0;
+                                var startY = 0;
+
+                                var onMouseMove = (event) => {
+                                    var deltaX = event.pageX - startX;
+                                    var deltaY = event.pageY - startY;
+
+                                    startX = event.pageX;
+                                    startY = event.pageY;
+
+                                    var left = parseInt(popupElement.style.left, 10);
+                                    var top = parseInt(popupElement.style.top, 10);
+
+                                    left = (
+                                        isNaN(left)
+                                        ? 0
+                                        : left) + deltaX;
+                                    top = (
+                                        isNaN(top)
+                                        ? 0
+                                        : top) + deltaY;
+
+                                    popupElement.style.left = left + "px";
+                                    popupElement.style.top = top + "px";
+                                }
+
+                                var onMouseUp = (event) => {
+                                    document.removeEventListener("mouseup", onMouseUp);
+                                    document.removeEventListener("mousemove", onMouseMove);
+                                }
+
+                                var onMouseDown = (event) => {
+                                    startX = event.pageX;
+                                    startY = event.pageY;
+                                    document.addEventListener("mousemove", onMouseMove);
+                                    document.addEventListener("mouseup", onMouseUp);
+                                    console.log("mouse down")
+                                }
+
+                                if (popup.style.left == undefined) {
+                                    popup.style.left = 0;
+                                }
+
+                                if (popup.style.top == undefined) {
+                                    popup.style.top = 0;
+                                }
+
+                                if (popup.customDraggingHandler) {
+                                    if (React.isValidElement(popupContent)) {
+                                        console.warn("Cannot enable custom dragging handler for created react element");
+                                    } else {
+                                        additionalProps = {
+                                            startDragging: onMouseDown
+                                        };
+                                    }
+                                    if (popup.keepDraggingByHeader) {
+                                        headerDragConfig = {
+                                            onMouseDown
+                                        }
+                                    }
+                                } else {
+                                    headerDragConfig = {
+                                        onMouseDown
+                                    }
+                                }
+                            }
+
+                            if (typeof popupContent == "function") {
+                                popupContent = React.createElement(popupContent, additionalProps)
+                            } else if (typeof popupContent == "object" && !React.isValidElement(popupContent)) {
+                                var clazz,
+                                    props;
+                                if (popupContent instanceof Array) {
+                                    clazz = popupContent[0];
+                                    props = popupContent[1];
+                                } else {
+                                    clazz = popupContent.type;
+                                    props = popupContent.props;
+                                }
+                                popupContent = React.createElement(clazz, {
+                                    ...props,
+                                    ...additionalProps
+                                })
+                            }
+
+                            var popupDisplayer = (<div ref={onRef} className={classes.join(" ")} style={popup.style}>
+                                <div className="popup-header" {...headerDragConfig}>
+                                    <div className="popup-title">{popup.title}</div>
+                                    <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={(e) => {
                                             onClose(e)
                                         }}/>
-                                    </div>
-                                    <div className="popup-content">
-                                        {popup.content}
-                                    </div>
                                 </div>
-                            )
+                                <div className="popup-content">
+                                    {popupContent}
+                                </div>
+                            </div>)
 
-                            list.push(popup.modal
-                                ? (
-                                    <div key={popup.key} className="popup-holder">
-                                        <div className="popup-modal" {...popup.modal} onClick={(e) => {
+                            list.push(
+                                popup.modal
+                                ? (<div key={popup.key} className="popup-holder">
+                                    <div className="popup-modal" {...popup.modal} onClick={(e) => {
                                             onClose(e, "modal")
                                         }}></div>
-                                        {popupDisplayer}
-                                    </div>
-                                )
-                                : (
-                                    <div key={popup.key} className="popup-holder">{popupDisplayer}</div>
-                                ))
+                                    {popupDisplayer}
+                                </div>)
+                                : (<div key={popup.key} className="popup-holder">{popupDisplayer}</div>))
                         })(this.state.popups[id])
                     }
                     return list
-                })()}
-            </div>
-        )
+                })()
+            }
+        </div>)
     }
 }
 

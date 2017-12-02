@@ -82,6 +82,9 @@ below is simple popup config:
     title: "Popup title",
     className: ["test-popup"],
     autoClose: true, // auto close on modal or close button clicked
+    draggable: true, // default false, true to enable drag popup
+    customDraggingHandler: true, // default false, use for custom dragging handler,
+    keepDraggingByHeader: true, // if customDraggingHandler == true bug still want to drag by popup header
     closeBtn: {
         // all properties here will be forwarded to close button, except onClick
         className: ["test-close-btn"],
