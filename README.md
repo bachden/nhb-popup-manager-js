@@ -82,9 +82,9 @@ below is simple popup config:
     title: "Popup title",
     className: ["test-popup"],
     autoClose: true, // auto close on modal or close button clicked
-    draggable: true, // default false, true to enable drag popup
+    draggable: true, // default false, true to enable popup dragging
     customDraggingHandler: true, // default false, use for custom dragging handler,
-    keepDraggingByHeader: true, // if customDraggingHandler == true bug still want to drag by popup header
+    keepDraggingByHeader: true, // if customDraggingHandler == true but still want to drag by popup header
     closeBtn: {
         // all properties here will be forwarded to close button, except onClick
         className: ["test-close-btn"],
@@ -112,6 +112,9 @@ below is simple popup config:
         // method called everytime popup closed
         console.log("popup closed: id=" + popupId)
     },
+    // content can be react element, or class, or [class, props] array, or {type: class, props} object
+    // if content is valid and not a react element, its props will has "popupId"
+    // if (draggable && customDraggingHandler) == true, content's props will has "startDragging(event)" method injected
     content: (
         <div className="test-content">
             <p>This is popup content</p>

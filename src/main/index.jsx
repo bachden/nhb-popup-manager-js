@@ -245,9 +245,11 @@ export default class PopupManager extends React.Component {
                                 }
                             }
 
-                            if (typeof popupContent == "function") {
+                            if (React.isValidElement(popupContent)) {
+                                console.warn("Popup content is react element, cannot inject popupId props or make custom dragging");
+                            } else if (typeof popupContent == "function") {
                                 popupContent = React.createElement(popupContent, additionalProps)
-                            } else if (typeof popupContent == "object" && !React.isValidElement(popupContent)) {
+                            } else if (typeof popupContent == "object") {
                                 var clazz,
                                     props;
                                 if (popupContent instanceof Array) {
@@ -261,6 +263,8 @@ export default class PopupManager extends React.Component {
                                     ...props,
                                     ...additionalProps
                                 })
+                            } else {
+                                throw "Invalid popup content, expect react element or class, or [class, props] array or {type: class, props} object"
                             }
 
                             var popupDisplayer = (<div ref={onRef} className={classes.join(" ")} style={popup.style}>
