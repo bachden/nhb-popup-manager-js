@@ -18,7 +18,7 @@ class MyPopup extends React.Component {
                 this.props.startDragging(event)
             }}>
             <p>This is popup: {this.props.popupId}</p>
-            <button onClick={openPopup}>Force close and open another</button>
+            <button onClick={openPopup}>Open another</button>
         </div>)
     }
 }
@@ -53,6 +53,7 @@ function openPopup() {
             },
             onPopupWillClose: (popupId, type) => {
                 console.log("Popup " + popupId + " by type: " + type)
+                return true;
                 return confirm("You're attempting to close popup " + (
                     type == "normal"
                     ? "by normal way"
@@ -70,7 +71,8 @@ function openPopup() {
         })
     }
     if (prevPopupId != undefined) {
-        PopupManager.close(prevPopupId, openNewPopup, true)
+        openNewPopup()
+        // PopupManager.close(prevPopupId, openNewPopup, true)
     } else {
         openNewPopup()
     }

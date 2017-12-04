@@ -151,6 +151,9 @@ export default class PopupManager extends React.Component {
         }
 
         var popups = Object.assign({}, manager.state.popups)
+        popup = {
+            ...popup
+        }
         popup.key = popup.id = idSeed++;
         popups[popup.id] = popup
         manager.setState({
@@ -239,13 +242,18 @@ export default class PopupManager extends React.Component {
                             var draggable = popup.draggable;
                             var popupContent = popup.content;
 
-                            var popupElement;
-                            var zoomFunction;
+                            var popupElement = popup.element;
+                            var zoomFunction = popupElement
+                                ? popupElement.zoom
+                                : undefined;
+
                             var headerDragConfig = {};
 
                             var onRef = (target) => {
-                                popupElement = target;
-                                zoomFunction = target.zoom;
+                                if (!popup.element) {
+                                    popupElement = popup.element = target;
+                                    zoomFunction = target.zoom;
+                                }
                             }
 
                             var additionalProps = {
