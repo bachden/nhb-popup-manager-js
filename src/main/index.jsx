@@ -170,7 +170,9 @@ export default class PopupManager extends React.Component {
 
                             var draggable = popup.draggable;
                             var popupContent = popup.content;
-                            var additionalProps = {};
+                            var additionalProps = {
+                                popupId: id
+                            };
 
                             var popupElement;
                             var headerDragConfig = {};
@@ -229,9 +231,7 @@ export default class PopupManager extends React.Component {
                                     if (React.isValidElement(popupContent)) {
                                         console.warn("Cannot enable custom dragging handler for created react element");
                                     } else {
-                                        additionalProps = {
-                                            startDragging: onMouseDown
-                                        };
+                                        additionalProps.startDragging = onMouseDown;
                                     }
                                     if (popup.keepDraggingByHeader) {
                                         headerDragConfig = {

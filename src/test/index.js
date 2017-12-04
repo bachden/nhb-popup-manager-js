@@ -12,7 +12,7 @@ class MyPopup extends React.Component {
                 console.log("start dragging")
                 this.props.startDragging(event)
             }}>
-            <p>This is popup: {this.props.getId()}</p>
+            <p>This is popup: {this.props.popupId}</p>
             <button onClick={openPopup}>Force close and open another</button>
         </div>)
     }
@@ -21,10 +21,7 @@ class MyPopup extends React.Component {
 function openPopup() {
     var openNewPopup = () => {
         prevPopupId = PopupManager.open({
-            title: "Popup " + (
-            popupIndex++),
-            className: ["test-popup"],
-            autoClose: true, // if modalEnabled == true, auto close on modal clicked
+            title: "Test popup", className: ["test-popup"], autoClose: true, // if modalEnabled == true, auto close on modal clicked
             closeBtn: {
                 // all properties here will be forwarded to close button
                 className: ["test-close-btn"],
@@ -34,7 +31,7 @@ function openPopup() {
             },
             draggable: true,
             customDraggingHandler: true,
-            keepDraggingByHeader: false,
+            keepDraggingByHeader: true,
             // styling for popup wrapper tag
             style: {
                 position: "absolute"
@@ -61,11 +58,7 @@ function openPopup() {
                 console.log("popup closed: id=" + popupId)
                 prevPopupId = undefined
             },
-            content: [
-                MyPopup, {
-                    getId: () => prevPopupId
-                }
-            ]
+            content: MyPopup
         }, (popupId) => {
             prevPopupId = popupId
             console.log("new popup opened: id=" + popupId)
