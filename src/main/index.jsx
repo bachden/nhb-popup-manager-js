@@ -6,6 +6,74 @@ let instances = {}
 let idSeed = 0;
 let popupIdToManagerInstance = {}
 
+class Popup extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            zoom: 1,
+            x: props.style.left == undefined
+                ? 0
+                : parseInt(props.style.left),
+            y: props.style.top == undefined
+                ? 0
+                : parseInt(props.style.top)
+        }
+
+        this.zoom = this.zoom.bind(this);
+        this.move = this.move.bind(this);
+
+        if (typeof props.setRef == "function") {
+            props.setRef(this)
+        }
+    }
+
+    zoom(zoom, callback) {
+        this.setState({
+            zoom: zoom
+        }, callback)
+    }
+
+    move(deltaPos, callback) {
+        this.setState({
+            x: this.state.x + (
+                deltaPos.x == undefined
+                ? 0
+                : deltaPos.x / this.state.zoom),
+            y: this.state.y + (
+                deltaPos.y == undefined
+                ? 0
+                : deltaPos.y / this.state.zoom)
+        }, callback)
+    }
+
+    position() {
+        return {
+            x: this.state.x == undefined
+                ? 0
+                : this.state.x,
+            y: this.state.y == undefined
+                ? 0
+                : this.state.y
+        }
+    }
+
+    render() {
+        var {
+            children,
+            className,
+            style
+        } = this.props;
+
+        return (<div className={className} style={{
+                ...style,
+                zoom: this.state.zoom,
+                left: this.state.x + "px",
+                top: this.state.y + "px"
+            }}>{children}</div>)
+    }
+}
+
 export default class PopupManager extends React.Component {
 
     constructor(props) {
@@ -170,15 +238,32 @@ export default class PopupManager extends React.Component {
 
                             var draggable = popup.draggable;
                             var popupContent = popup.content;
-                            var additionalProps = {
-                                popupId: id
-                            };
 
                             var popupElement;
+                            var zoomFunction;
                             var headerDragConfig = {};
+
                             var onRef = (target) => {
                                 popupElement = target;
+                                zoomFunction = target.zoom;
                             }
+
+                            var additionalProps = {
+                                popupId: id,
+                                zoomPopup: (value, callback) => {
+                                    if (typeof zoomFunction == "function") {
+                                        zoomFunction(value, callback)
+                                    } else {
+                                        throw "Invalid popup element, cannot find zoom function"
+                                    }
+                                },
+                                getPopupPosition: () => {
+                                    return popupElement
+                                        ? popupElement.position()
+                                        : undefined
+                                }
+                            };
+
                             if (draggable) {
                                 var startX = 0;
                                 var startY = 0;
@@ -190,20 +275,7 @@ export default class PopupManager extends React.Component {
                                     startX = event.pageX;
                                     startY = event.pageY;
 
-                                    var left = parseInt(popupElement.style.left, 10);
-                                    var top = parseInt(popupElement.style.top, 10);
-
-                                    left = (
-                                        isNaN(left)
-                                        ? 0
-                                        : left) + deltaX;
-                                    top = (
-                                        isNaN(top)
-                                        ? 0
-                                        : top) + deltaY;
-
-                                    popupElement.style.left = left + "px";
-                                    popupElement.style.top = top + "px";
+                                    popupElement.move({x: deltaX, y: deltaY})
                                 }
 
                                 var onMouseUp = (event) => {
@@ -216,15 +288,6 @@ export default class PopupManager extends React.Component {
                                     startY = event.pageY;
                                     document.addEventListener("mousemove", onMouseMove);
                                     document.addEventListener("mouseup", onMouseUp);
-                                    console.log("mouse down")
-                                }
-
-                                if (popup.style.left == undefined) {
-                                    popup.style.left = 0;
-                                }
-
-                                if (popup.style.top == undefined) {
-                                    popup.style.top = 0;
                                 }
 
                                 if (popup.customDraggingHandler) {
@@ -267,7 +330,7 @@ export default class PopupManager extends React.Component {
                                 throw "Invalid popup content, expect react element or class, or [class, props] array or {type: class, props} object"
                             }
 
-                            var popupDisplayer = (<div ref={onRef} className={classes.join(" ")} style={popup.style}>
+                            var popupDisplayer = (<Popup setRef={onRef} className={classes.join(" ")} style={popup.style}>
                                 <div className="popup-header" {...headerDragConfig}>
                                     <div className="popup-title">{popup.title}</div>
                                     <div {...closeBtn} className={closeBtnClasses.join(" ")} onClick={(e) => {
@@ -277,7 +340,7 @@ export default class PopupManager extends React.Component {
                                 <div className="popup-content">
                                     {popupContent}
                                 </div>
-                            </div>)
+                            </Popup>)
 
                             list.push(
                                 popup.modal

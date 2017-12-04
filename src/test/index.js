@@ -7,6 +7,11 @@ var popupIndex = 0;
 var prevPopupId = undefined;
 
 class MyPopup extends React.Component {
+
+    componentDidMount() {
+        this.props.zoomPopup(1.5)
+    }
+
     render() {
         return (<div className="test-content" onMouseDown={(event) => {
                 console.log("start dragging")
