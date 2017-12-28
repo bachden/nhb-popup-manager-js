@@ -1,6 +1,6 @@
 {
     "name": "nhb-popup-manager",
-    "version": "3.2.1",
+    "version": "3.2.2",
     "description": "PopupManager for react",
     "main": "index.js",
     "scripts": {
@@ -33,6 +33,7 @@
         ]
     },
     "dependencies": {
+        "bowser": "^1.9.1",
         "css-loader": "^0.28.7",
         "react": "^15.6.1",
         "react-dom": "^15.6.1",

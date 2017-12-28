@@ -1,5 +1,6 @@
 import React from "react"
 import css from "./popup-manager.css"
+let bowser = require('bowser');
 
 const DEFAULT_INSTANCE_NAME = "_default_"
 let instances = {}
@@ -65,12 +66,19 @@ class Popup extends React.Component {
             style
         } = this.props;
 
-        return (<div className={className} style={{
-                ...style,
-                zoom: this.state.zoom,
-                left: this.state.x + "px",
-                top: this.state.y + "px"
-            }}>{children}</div>)
+        var popupStyle = {
+            ...style,
+            zoom: this.state.zoom,
+            left: this.state.x + "px",
+            top: this.state.y + "px"
+        }
+
+        if (bowser.firefox) {
+            popupStyle.transform = "scale(" + this.state.zoom + ")";
+            popupStyle.transformOrigin = "top left";
+        }
+
+        return (<div className={className} style={popupStyle}>{children}</div>)
     }
 }
 
